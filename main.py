@@ -26,16 +26,20 @@ class CTF(object):
 		self.score=0
 		self.load()
 	
-	def next(self):
-		self.level+=1
-		self.score+=self.challenge.points
-		self.load()
 	
 	def load(self):
-		self.challenge=self.module.__getattribute__("Level_{}".format(self.level))()
+		modname="Level_{}".format(self.level)
+		if hasattr(self.module,modname):
+			self.challenge=self.module.__getattribute__(modname)()
+		else:
+			return True
 	
 	def verify(self,ans):
-		return self.challenge.verify(ans)
+		ok=self.challenge.verify(ans)
+		if ok:
+			self.level+=1
+			self.score+=self.challenge.points
+		return ok
 	
 	def get(self):
 		return self.challenge.text.format(self.challenge.challenge)
@@ -79,9 +83,7 @@ class Commands(object):
 	def cmd_ans(self,ans):
 		player=self.bot.lastmsg['src_nick']
 		if active_ctfs[player].verify(ans):
-			try:
-				active_ctfs[player].next()
-			except AttributeError:
+			if active_ctfs[player].load():
 				return ["Congratulations, you've completed the CTF","Your final score is: {}".format(active_ctfs[player].score)]
 		return ["Well Done!",active_ctfs[player].get()]
 	
