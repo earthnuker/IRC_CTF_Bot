@@ -88,7 +88,7 @@ class Commands(object):
 		return ["Well Done!",active_ctfs[player].get()]
 	
 	def default(self,item,*args):
-		return
+		return ["Unknown command: {}".format(item)]
 	
 	def __call__(self,item,args):
 		try:
@@ -102,7 +102,7 @@ class IRCBot(object):
 		self.trigger="!"
 		self.server="irc.bonerjamz.us"
 		self.port=6667
-		self.channels=['#tuug']
+		self.channels=['#bot_test']
 		self.nick="CryptoCTF-Bot"
 		self.owner="Earthnuker"
 		self.execute=Commands(self)
